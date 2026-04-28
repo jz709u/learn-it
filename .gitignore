@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Xcode build products
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+.swift-cache/
+
+# App bundles and archives
+*.app
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.xcarchive
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.lock
+
+# Local tooling caches
+.idea/
+.vscode/
+
+# Local study content
+flashcards/
+extracted/

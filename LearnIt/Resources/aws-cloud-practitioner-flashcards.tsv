@@ -1,0 +1,167 @@
+What is cloud computing?	The on-demand delivery of compute power, database storage, applications, and other IT resources through a cloud services platform with pay-as-you-go pricing.	Cloud Basics
+What are the main problems with the traditional IT approach?	High upfront cost, rent/power/cooling/maintenance, slow hardware changes, limited scaling, 24/7 operations burden, and disaster recovery challenges.	Cloud Basics
+What are the core components of a server?	Compute (CPU), memory (RAM), storage, database, and networking components like routers, switches, and DNS.	Cloud Basics
+What does a router do?	It forwards data packets between networks and determines where packets should go.	Cloud Basics
+What does a switch do?	It sends packets to the correct server or client within a network.	Cloud Basics
+What does pay-as-you-go pricing mean in AWS?	You pay only for the resources you use instead of buying infrastructure upfront.	Cloud Basics
+Why is agility a cloud benefit?	Cloud resources can be provisioned quickly, so teams can experiment and deploy faster.	Cloud Basics
+What is the main AWS certification level for Cloud Practitioner?	Foundational.	Cloud Basics
+In IAM, what is a user?	A representation of a physical person that can sign in to AWS, typically with a console password and optional access keys.	IAM
+What is an IAM group?	A collection of IAM users used to assign permissions to multiple users at once. Groups contain users only.	IAM
+What is an IAM policy?	A JSON document that defines permissions for users, groups, or roles.	IAM
+What is an IAM role typically used for?	Granting permissions to AWS services such as EC2 or Lambda without embedding credentials.	IAM
+What are access keys used for?	Programmatic access to AWS through the CLI or SDK.	IAM
+What are the two main IAM security controls?	Multi-factor authentication and password policies.	IAM
+What is the main security benefit of MFA?	It protects accounts even if a password is stolen because sign-in also requires possession of a security device.	IAM
+What is the AWS CLI?	A command-line tool to manage AWS services.	IAM
+What is the AWS SDK?	A language-specific library used to manage AWS services programmatically.	IAM
+Which IAM tools are used for auditing permissions and credentials?	IAM Credential Reports and IAM Access Advisor.	IAM
+What is the IAM best-practice principle for permissions?	Least privilege: give only the permissions needed to perform the task.	IAM
+What is an EC2 instance made of?	An AMI, an instance type, storage, security groups, and optional user data.	EC2
+What is an AMI?	An Amazon Machine Image used to launch ready-to-use EC2 instances with a chosen OS and configuration.	EC2
+What does an EC2 instance type define?	The instance’s hardware profile, such as CPU, RAM, networking, and sometimes storage characteristics.	EC2
+What is EC2 User Data?	A script that runs when an instance starts for the first time, often used for bootstrapping.	EC2
+What is a security group?	A stateful firewall attached to an EC2 instance or ENI that controls inbound and outbound traffic.	EC2
+What port is typically used for SSH into Linux EC2 instances?	Port 22.	EC2
+What is an EC2 instance role?	An IAM role attached to an EC2 instance so the instance can call AWS services securely.	EC2
+When should you use On-Demand Instances?	For short-term, irregular, or unpredictable workloads where you need flexibility and no commitment.	EC2
+When are Reserved Instances or Savings Plans a good fit?	For steady, long-term workloads where you want discounted pricing in exchange for commitment.	EC2
+When are Spot Instances a good fit?	For fault-tolerant workloads that can handle interruptions and need the lowest cost.	EC2
+What is the difference between vertical and horizontal scaling?	Vertical scaling increases the size of one instance; horizontal scaling adds more instances.	EC2
+What is an EBS volume?	A network-attached block storage volume for EC2, tied to a single Availability Zone and attached to one instance at a time.	EC2 Storage
+What are EBS snapshots used for?	Backups and transferring EBS-backed data across Availability Zones.	EC2 Storage
+What is EC2 Image Builder?	A service that automatically builds, tests, and distributes AMIs.	EC2 Storage
+What is EC2 Instance Store?	High-performance storage physically attached to the host, which is lost if the instance stops or terminates.	EC2 Storage
+What is EFS?	A managed network file system that can be mounted by hundreds of instances across a region.	EC2 Storage
+What is EFS-IA?	A lower-cost EFS storage class for files accessed infrequently.	EC2 Storage
+What is FSx for Windows File Server?	A managed Windows-native file system that supports SMB and Windows workloads.	EC2 Storage
+What is FSx for Lustre designed for?	High-performance Linux workloads and high-performance computing.	EC2 Storage
+What does an Elastic Load Balancer do?	It distributes traffic across multiple backend targets and supports health checks.	ELB and ASG
+What are the four load balancer types?	Classic, Application, Network, and Gateway Load Balancers.	ELB and ASG
+Which load balancer operates at Layer 7 for HTTP/HTTPS traffic?	Application Load Balancer.	ELB and ASG
+Which load balancer operates at Layer 4 for TCP traffic?	Network Load Balancer.	ELB and ASG
+What does an Auto Scaling Group do?	It automatically adds or removes EC2 instances based on demand and replaces unhealthy instances.	ELB and ASG
+How do ELB and ASG work together?	ELB distributes traffic, while ASG adjusts instance count and health across multiple AZs.	ELB and ASG
+What is the difference between an S3 bucket and an S3 object?	A bucket is the container; an object is the file and its metadata stored inside the bucket.	S3
+What are two key bucket properties?	Bucket names must be globally unique, and buckets are tied to a region.	S3
+What security controls can protect S3?	IAM policies, bucket policies, public access settings, and encryption.	S3
+What is S3 static website hosting?	Hosting a static website directly from an S3 bucket.	S3
+What is S3 Versioning used for?	Keeping multiple versions of objects and protecting against accidental deletion or overwrite.	S3
+What must be enabled before using S3 replication?	Versioning.	S3
+What is the difference between CRR and SRR?	CRR replicates across regions; SRR replicates within the same region.	S3
+What are the main S3 storage classes called out in the summary?	Standard, IA, One Zone-IA, Intelligent-Tiering, Glacier Instant Retrieval, Glacier Flexible Retrieval, and Glacier Deep Archive.	S3
+When should you use Snowball?	To move large amounts of data into S3 using a physical device, especially when network transfer would take more than about a week.	S3
+What is AWS Storage Gateway?	A hybrid service that extends on-premises storage into AWS, especially S3 and Glacier-backed patterns.	S3
+Which AWS managed relational database services are emphasized for OLTP workloads?	Amazon RDS and Amazon Aurora.	Databases
+What does RDS stand for?	Relational Database Service.	Databases
+What is Aurora?	An AWS proprietary relational database compatible with MySQL and PostgreSQL, optimized for the cloud.	Databases
+What is the difference between Multi-AZ and Read Replicas in RDS?	Multi-AZ improves availability and failover; Read Replicas improve read scalability.	Databases
+What is ElastiCache used for?	In-memory caching to improve application performance.	Databases
+What type of database is DynamoDB?	A serverless key-value NoSQL database.	Databases
+What is DAX?	DynamoDB Accelerator, an in-memory cache that reduces DynamoDB read latency.	Databases
+What are DynamoDB Global Tables used for?	Providing low-latency access to a DynamoDB table across multiple regions.	Databases
+What is Redshift designed for?	Data warehousing and OLAP analytics using SQL.	Databases
+What is EMR used for?	Creating and managing Hadoop and big data clusters.	Databases
+What is Athena used for?	Running serverless SQL queries directly against data in Amazon S3.	Databases
+What is QuickSight used for?	Building serverless dashboards and visualizations from data sources like S3, Athena, RDS, Aurora, and Redshift.	Databases
+What is AWS Glue used for?	Managed ETL and Data Catalog functionality.	Databases
+What is AWS DMS used for?	Migrating databases into AWS.	Databases
+What is ECS?	A managed AWS container orchestration service for running Docker containers.	Compute
+What is Fargate?	A serverless compute engine for containers where you do not manage EC2 instances.	Compute
+What is ECR?	A private Docker image repository on AWS.	Compute
+What is EKS?	Amazon Elastic Kubernetes Service, AWS’s managed Kubernetes offering.	Compute
+What is AWS Lambda?	A serverless Function as a Service that runs code in response to events.	Compute
+How is Lambda billed?	By number of invocations and execution duration multiplied by the RAM provisioned.	Compute
+What is the maximum Lambda execution time?	Up to 15 minutes.	Compute
+What happens when you increase Lambda memory?	You also increase CPU and network resources.	Compute
+What is a common use case for Lambda?	Creating image thumbnails when files are uploaded to S3.	Compute
+What service commonly exposes Lambda functions as HTTP APIs?	Amazon API Gateway.	Compute
+What is CloudFormation?	Infrastructure as Code for AWS using declarative templates.	Deployment
+What is a major benefit of CloudFormation?	Repeatable deployments across regions and accounts with a known architecture.	Deployment
+What is Elastic Beanstalk?	A PaaS-style service for deploying applications with AWS-managed infrastructure underneath.	Deployment
+What is CodeDeploy used for?	Deploying and upgrading applications on servers.	Deployment
+What is Systems Manager used for?	Patching, configuring, and running commands at scale across servers.	Deployment
+What is AWS CDK?	A way to define cloud infrastructure using programming languages, which synthesizes to CloudFormation.	Deployment
+What does Route 53 provide?	Managed DNS and traffic routing for applications.	Global and Networking
+What is an alias record in Route 53 used for?	Pointing a domain name to AWS resources such as ELB, CloudFront, S3, or other supported AWS targets.	Global and Networking
+What is CloudFront?	AWS’s content delivery network used to cache content at edge locations for lower latency.	Global and Networking
+What is S3 Transfer Acceleration used for?	Faster global uploads and downloads into Amazon S3 using the AWS edge network.	Global and Networking
+What is AWS Global Accelerator used for?	Improving global application availability and performance using the AWS global network.	Global and Networking
+What is AWS Outposts?	AWS-managed racks installed in customer data centers to extend AWS services on-premises.	Global and Networking
+What is AWS Wavelength for?	Running AWS services at the edge of 5G networks for ultra-low-latency applications.	Global and Networking
+What is an AWS Local Zone?	AWS infrastructure placed closer to users to reduce latency for sensitive workloads.	Global and Networking
+What is a VPC?	A Virtual Private Cloud, which is a private network in AWS for deploying resources.	VPC
+What is a subnet?	A partition of a VPC tied to a single Availability Zone.	VPC
+What does an Internet Gateway do?	It gives internet access to resources in public subnets.	VPC
+What does a NAT Gateway do?	It gives outbound internet access to resources in private subnets.	VPC
+What is the difference between a security group and a NACL?	Security groups are stateful and operate at the instance/ENI level; NACLs are stateless and operate at the subnet level.	VPC
+What are VPC Flow Logs?	Network traffic logs for VPC resources that can be sent to S3, CloudWatch Logs, or Firehose.	VPC
+What is VPC Peering?	A private connection between two VPCs with non-overlapping IP ranges; it is non-transitive.	VPC
+What is a VPC Endpoint?	A way to access AWS services privately from a VPC without traversing the public internet.	VPC
+What is AWS PrivateLink?	A private way to connect to services in another VPC or third-party VPCs without peering or internet gateways.	VPC
+What is the difference between Site-to-Site VPN and Direct Connect?	Site-to-Site VPN uses the public internet; Direct Connect is a dedicated private network link to AWS.	VPC
+What is Transit Gateway?	A hub service that connects thousands of VPCs and on-premises networks together.	VPC
+What is SQS?	A managed queue service used to decouple applications.	Integration
+How long can SQS messages be retained according to the summary?	Up to 14 days.	Integration
+What is the difference between SQS and SNS?	SQS is a queue where consumers share and remove messages; SNS is pub/sub where all subscribers receive messages and there is no retention.	Integration
+What is SNS?	A managed notification and pub/sub service with subscribers like email, Lambda, SQS, HTTP, and mobile endpoints.	Integration
+What is Kinesis mainly associated with for the exam?	Real-time big data streaming, persistence, and analysis.	Integration
+What is Amazon MQ for?	A managed message broker for ActiveMQ and RabbitMQ workloads that need traditional messaging protocols.	Integration
+What does CloudWatch Metrics provide?	Performance and usage metrics for AWS services, including billing metrics.	Monitoring
+What does a CloudWatch Alarm do?	It watches a metric threshold and can notify SNS, trigger actions, or automate responses.	Monitoring
+What does CloudWatch Logs collect?	Logs from services like EC2, Lambda, Elastic Beanstalk, ECS, and on-premises servers with agents.	Monitoring
+What is EventBridge?	An event bus and rules engine that reacts to AWS events or scheduled events.	Monitoring
+What is CloudTrail used for?	Auditing API calls made in an AWS account.	Monitoring
+If a resource was deleted unexpectedly, what service should you investigate first?	AWS CloudTrail.	Monitoring
+What is CloudTrail Insights?	Automated analysis of CloudTrail events to detect unusual activity patterns.	Monitoring
+What is AWS X-Ray used for?	Tracing requests through distributed applications.	Monitoring
+What is the difference between AWS Health Dashboard and AWS Account Health Dashboard?	AWS Health Dashboard shows AWS service health broadly, while Account Health Dashboard shows events affecting your specific infrastructure.	Monitoring
+What is the AWS Shared Responsibility Model?	AWS is responsible for security of the cloud, while customers are responsible for security in the cloud.	Security
+What does AWS Shield protect against?	DDoS attacks.	Security
+What is the difference between Shield Standard and Shield Advanced?	Shield Standard is automatic baseline DDoS protection; Shield Advanced adds enhanced protection and 24/7 specialized support.	Security
+What is AWS WAF used for?	Filtering incoming web requests based on defined rules.	Security
+On which services can AWS WAF be deployed?	Application Load Balancer, API Gateway, and CloudFront.	Security
+What is AWS KMS?	A managed key management service used for encryption keys across AWS services.	Security
+When you hear “encryption” in AWS exam questions, what service is most likely involved?	AWS KMS.	Security
+What is CloudHSM?	Hardware-based key management where you manage the encryption keys.	Security
+What is AWS Certificate Manager used for?	Provisioning, managing, and deploying SSL/TLS certificates.	Security
+What is AWS Artifact used for?	Accessing AWS compliance reports and agreements such as PCI and ISO documents.	Security
+What is GuardDuty used for?	Detecting malicious behavior using signals like VPC Flow Logs, DNS logs, and CloudTrail.	Security
+What does Amazon Inspector evaluate?	Software vulnerabilities and exposure in EC2 instances, ECR images, and Lambda functions.	Security
+What is Macie used for?	Discovering sensitive data, such as PII, in Amazon S3.	Security
+What is AWS Config used for?	Tracking configuration changes and evaluating compliance against rules.	Security
+What is AWS Security Hub used for?	Aggregating and centralizing security findings across AWS accounts and services.	Security
+What is Amazon Detective used for?	Investigating and finding root causes of suspicious activities or security issues.	Security
+What is IAM Access Analyzer used for?	Identifying resources that are shared externally.	Security
+What is Firewall Manager used for?	Managing security rules such as WAF and Shield policies across an AWS Organization.	Security
+What are examples of root-user-only or root-level sensitive actions?	Changing account settings, closing the AWS account, changing/canceling support plans, registering as a seller in the RI Marketplace, and enabling MFA-delete style sensitive account actions.	Security
+What is AWS Organizations used for?	Managing multiple AWS accounts centrally.	Billing and Governance
+What are the cost benefits of AWS Organizations?	Consolidated billing, aggregated usage discounts, and pooled Reserved Instance or Savings Plan benefits.	Billing and Governance
+What is an Organizational Unit in AWS Organizations?	A grouping of AWS accounts used for management and policy application.	Billing and Governance
+What is an SCP?	A Service Control Policy that sets account-level permission guardrails in AWS Organizations.	Billing and Governance
+Does an SCP apply to the management account?	No.	Billing and Governance
+Does an SCP affect the root user in member accounts?	Yes, it applies to all users and roles in the account, including root.	Billing and Governance
+What is AWS Control Tower?	A service that sets up and governs a secure multi-account AWS environment using AWS best practices.	Billing and Governance
+What is AWS RAM used for?	Sharing supported AWS resources across accounts without duplicating them.	Billing and Governance
+What is the AWS Pricing Calculator used for?	Estimating the cost of an AWS architecture before deployment.	Billing and Governance
+What are cost allocation tags used for?	Tracking AWS costs at a detailed level by resource metadata such as team, environment, or owner.	Billing and Governance
+What is the Cost and Usage Report?	The most comprehensive AWS billing and usage dataset, available in hourly or daily line items and usable with Athena, Redshift, or QuickSight.	Billing and Governance
+What is Cost Explorer used for?	Visualizing, analyzing, and forecasting AWS costs and usage over time.	Billing and Governance
+Where do CloudWatch billing alarms use billing metrics from?	us-east-1.	Billing and Governance
+What is the limitation of CloudWatch billing alarms versus Budgets?	They are simpler and based on actual cost rather than more advanced budget tracking and forecasting.	Billing and Governance
+What are the four AWS Budgets types?	Usage, Cost, Reservation, and Savings Plans budgets.	Billing and Governance
+What is AWS Cost Anomaly Detection used for?	Using machine learning to detect unusual spend patterns and alert on anomalies.	Billing and Governance
+What is AWS Compute Optimizer used for?	Recommending right-sized AWS resources to improve performance and reduce cost.	Billing and Governance
+What does Trusted Advisor analyze?	Recommendations across cost optimization, performance, security, fault tolerance, service limits, and operational excellence.	Billing and Governance
+Which support plans get the full set of Trusted Advisor checks?	Business, Enterprise On-Ramp, and Enterprise support plans.	Billing and Governance
+What is included in the Basic Support plan?	Customer service and documentation, core Trusted Advisor checks, and Personal Health Dashboard access.	Billing and Governance
+When is the Business Support plan appropriate?	For production workloads needing 24/7 support and full Trusted Advisor access.	Billing and Governance
+What extra feature does Enterprise On-Ramp add beyond Business Support?	Access to a pool of Technical Account Managers plus concierge and review features.	Billing and Governance
+What extra feature does Enterprise Support add beyond On-Ramp?	A designated Technical Account Manager and faster response for business-critical issues.	Billing and Governance
+What is the AWS Well-Architected Tool used for?	Reviewing workloads against the six pillars of the Well-Architected Framework and getting improvement guidance.	Architecture and Strategy
+What are the six AWS CAF perspectives?	Business, People, Governance, Platform, Security, and Operations.	Architecture and Strategy
+What does the Business perspective in AWS CAF focus on?	Making sure cloud investments accelerate digital transformation goals and business outcomes.	Architecture and Strategy
+What does the Platform perspective in AWS CAF focus on?	Building scalable hybrid cloud platforms, modernizing workloads, and implementing cloud-native solutions.	Architecture and Strategy
+What does the Security perspective in AWS CAF focus on?	Achieving confidentiality, integrity, and availability for data and workloads.	Architecture and Strategy
+What does the Operations perspective in AWS CAF focus on?	Delivering cloud services at a level that meets business needs.	Architecture and Strategy
+What are the four AWS CAF transformation phases?	Envision, Align, Launch, and Scale.	Architecture and Strategy
