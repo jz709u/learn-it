@@ -8,12 +8,22 @@ import SwiftUI
 
 struct StudySessionScreen: View {
     let item: DeckLibraryItem
-    @ObservedObject var deckStore: FlashcardDeckStore
+    @StateObject private var session: DeckSessionViewModel
     let selectedTopic: String
+    let studyMode: StudyMode
+    let dueAmount: Int
 
     @State private var sessionCards: [Flashcard] = []
     @State private var studyPosition = 0
     @State private var isShowingAnswer = false
+
+    init(item: DeckLibraryItem, deckStore: FlashcardDeckStore, selectedTopic: String, studyMode: StudyMode, dueAmount: Int) {
+        self.item = item
+        self.selectedTopic = selectedTopic
+        self.studyMode = studyMode
+        self.dueAmount = dueAmount
+        _session = StateObject(wrappedValue: DeckSessionViewModel(item: item, deckStore: deckStore))
+    }
 
     private var currentCard: Flashcard? {
         guard sessionCards.indices.contains(studyPosition) else { return nil }
@@ -46,13 +56,9 @@ struct StudySessionScreen: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            deckStore.selectDeck(withID: item.id)
             refreshSession(resetPosition: true)
         }
-        .onChange(of: deckStore.deck.identifier) { _, _ in
-            refreshSession(resetPosition: true)
-        }
-        .onChange(of: deckStore.studyMode) { _, _ in
+        .onChange(of: session.deck.identifier) { _, _ in
             refreshSession(resetPosition: true)
         }
     }
@@ -80,7 +86,7 @@ struct StudySessionScreen: View {
                         HStack(spacing: 10) {
                             ForEach(ReviewRating.allCases) { rating in
                                 Button(rating.rawValue) {
-                                    deckStore.schedule(rating, for: card)
+                                    session.schedule(rating, for: card)
                                     advanceAfterReview()
                                 }
                                 .buttonStyle(.borderedProminent)
@@ -91,7 +97,7 @@ struct StudySessionScreen: View {
                 }
             } else {
                 ContentUnavailableView(
-                    deckStore.studyMode == .due ? "No Due Cards" : "No Cards",
+                    studyMode == .all ? "No Cards" : "No Due Cards",
                     systemImage: "rectangle.stack.badge.minus",
                     description: Text(emptyStateDescription)
                 )
@@ -103,11 +109,11 @@ struct StudySessionScreen: View {
 
     private var sessionSubtitle: String {
         let topicLabel = selectedTopic == "All Topics" ? "All topics" : selectedTopic
-        return "\(deckStore.studyMode.rawValue) queue • \(topicLabel)"
+        return "\(studyMode.rawValue) queue • \(topicLabel)"
     }
 
     private var emptyStateDescription: String {
-        switch deckStore.studyMode {
+        switch studyMode {
         case .due:
             return "Nothing is due in this topic right now. Go back to the deck detail to change the queue or topic."
         case .dueAmount:
@@ -135,7 +141,7 @@ struct StudySessionScreen: View {
     }
 
     private func refreshSession(resetPosition: Bool) {
-        sessionCards = deckStore.cards(for: selectedTopic)
+        sessionCards = session.cards(for: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
 
         if resetPosition || studyPosition >= sessionCards.count {
             resetStudyPosition()
@@ -145,7 +151,7 @@ struct StudySessionScreen: View {
     }
 
     private func reviewState(for card: Flashcard) -> ReviewState {
-        deckStore.reviewState(for: card)
+        session.reviewState(for: card)
     }
 
     private func dueLabel(for state: ReviewState) -> String {

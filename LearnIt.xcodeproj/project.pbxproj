@@ -11,6 +11,7 @@
 		560E884F2F96B75100E4A455 /* StudySessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560E884E2F96B74D00E4A455 /* StudySessionScreen.swift */; };
 		560E88512F96B7CB00E4A455 /* DeckMetaPillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560E88502F96B7C600E4A455 /* DeckMetaPillView.swift */; };
 		562034BB2FA14B2B005F3854 /* CardListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562034BA2FA14B2B005F3854 /* CardListScreen.swift */; };
+		56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */; };
 		A00000000000000000000011 /* LearnItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000001 /* LearnItApp.swift */; };
 		A00000000000000000000012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000002 /* ContentView.swift */; };
 		A00000000000000000000013 /* FlashcardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000003 /* FlashcardModels.swift */; };
@@ -26,6 +27,7 @@
 		560E884E2F96B74D00E4A455 /* StudySessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudySessionScreen.swift; sourceTree = "<group>"; };
 		560E88502F96B7C600E4A455 /* DeckMetaPillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckMetaPillView.swift; sourceTree = "<group>"; };
 		562034BA2FA14B2B005F3854 /* CardListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListScreen.swift; sourceTree = "<group>"; };
+		56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckSessionViewModel.swift; sourceTree = "<group>"; };
 		A00000000000000000000000 /* LearnIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LearnIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000001 /* LearnItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnItApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				A00000000000000000000003 /* FlashcardModels.swift */,
 				A00000000000000000000004 /* FlashcardDeckStore.swift */,
+				56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */,
 				A00000000000000000000008 /* ReviewScheduler.swift */,
 			);
 			path = Models;
@@ -209,6 +212,7 @@
 				562034BB2FA14B2B005F3854 /* CardListScreen.swift in Sources */,
 				560E88512F96B7CB00E4A455 /* DeckMetaPillView.swift in Sources */,
 				A00000000000000000000014 /* FlashcardDeckStore.swift in Sources */,
+				56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */,
 				A00000000000000000000015 /* TSVFlashcardParser.swift in Sources */,
 				A00000000000000000000016 /* CardView.swift in Sources */,
 				A00000000000000000000018 /* ReviewScheduler.swift in Sources */,

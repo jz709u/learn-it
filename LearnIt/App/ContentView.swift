@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showingImporter = false
     @State private var selectedLibraryItem: DeckLibraryItem?
     @State private var activeStudySession: StudySessionRoute?
+    @State private var selectedDeckID: String?
 
     var body: some View {
         NavigationStack {
@@ -52,8 +53,8 @@ struct ContentView: View {
                 DeckDetailScreen(
                     item: item,
                     deckStore: deckStore,
-                    onStartStudying: { selectedTopic, studyMode in
-                        startStudying(item, selectedTopic: selectedTopic, studyMode: studyMode)
+                    onStartStudying: { selectedTopic, studyMode, dueAmount in
+                        startStudying(item, selectedTopic: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
                     }
                 )
             }
@@ -61,7 +62,9 @@ struct ContentView: View {
                 StudySessionScreen(
                     item: route.item,
                     deckStore: deckStore,
-                    selectedTopic: route.selectedTopic
+                    selectedTopic: route.selectedTopic,
+                    studyMode: route.studyMode,
+                    dueAmount: route.dueAmount
                 )
             }
         }
@@ -89,16 +92,18 @@ struct ContentView: View {
             ForEach(deckStore.libraryItems) { item in
                 DeckLibraryRow(
                     item: item,
-                    isSelected: deckStore.isSelected(item),
+                    isSelected: selectedDeckID == item.id,
                     cardCount: deckStore.cardCount(for: item),
                     dueCount: deckStore.dueCount(for: item),
                     newCount: deckStore.newCount(for: item),
                     badgeBackground: deckBadgeBackground(for: item),
                     onOpenDetail: {
+                        selectedDeckID = item.id
                         selectedLibraryItem = item
                     },
                     onStartStudying: {
-                        startStudying(item, selectedTopic: "All Topics", studyMode: deckStore.studyMode)
+                        selectedDeckID = item.id
+                        startStudying(item, selectedTopic: "All Topics", studyMode: .due, dueAmount: 20)
                     }
                 )
             }
@@ -124,10 +129,8 @@ struct ContentView: View {
         }
     }
 
-    private func startStudying(_ item: DeckLibraryItem, selectedTopic: String, studyMode: StudyMode) {
-        deckStore.setStudyMode(studyMode)
-        deckStore.selectDeck(withID: item.id)
-        activeStudySession = StudySessionRoute(item: item, selectedTopic: selectedTopic)
+    private func startStudying(_ item: DeckLibraryItem, selectedTopic: String, studyMode: StudyMode, dueAmount: Int) {
+        activeStudySession = StudySessionRoute(item: item, selectedTopic: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
     }
 }
 
@@ -147,9 +150,11 @@ private extension ContentView {
 private struct StudySessionRoute: Identifiable, Hashable {
     let item: DeckLibraryItem
     let selectedTopic: String
+    let studyMode: StudyMode
+    let dueAmount: Int
 
     var id: String {
-        "\(item.id)::\(selectedTopic)"
+        "\(item.id)::\(selectedTopic)::\(studyMode.rawValue)::\(dueAmount)"
     }
 }
 

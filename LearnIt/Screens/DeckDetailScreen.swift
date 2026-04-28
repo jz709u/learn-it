@@ -8,17 +8,22 @@ import SwiftUI
 
 struct DeckDetailScreen: View {
     let item: DeckLibraryItem
-    @ObservedObject var deckStore: FlashcardDeckStore
-    let onStartStudying: (String, StudyMode) -> Void
+    @StateObject private var session: DeckSessionViewModel
+    let onStartStudying: (String, StudyMode, Int) -> Void
 
     @State var showResetProgressAlert: Bool = false
     @State private var selectedTopic = "All Topics"
+    @State private var studyMode: StudyMode = .due
+    @State private var dueAmountText = "20"
+
+    init(item: DeckLibraryItem, deckStore: FlashcardDeckStore, onStartStudying: @escaping (String, StudyMode, Int) -> Void) {
+        self.item = item
+        self.onStartStudying = onStartStudying
+        _session = StateObject(wrappedValue: DeckSessionViewModel(item: item, deckStore: deckStore))
+    }
 
     private var topics: [String] {
-        if deckStore.isSelected(item) {
-            return ["All Topics"] + deckStore.deck.topics
-        }
-        return ["All Topics"]
+        ["All Topics"] + session.deck.topics
     }
 
     var body: some View {
@@ -32,11 +37,9 @@ struct DeckDetailScreen: View {
                             .padding(.vertical, 6)
                             .background(badgeBackground, in: Capsule())
 
-                        if deckStore.isSelected(item) {
-                            Text("Current Deck")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.blue)
-                        }
+                        Text("Current Deck")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.blue)
                     }
 
                     Text(item.title)
@@ -60,25 +63,25 @@ struct DeckDetailScreen: View {
                 }
 
                 HStack(spacing: 12) {
-                    DeckMetaPillView(label: "Cards", value: "\(deckStore.cardCount(for: item))")
-                    DeckMetaPillView(label: "Due", value: "\(deckStore.dueCount(for: item))")
-                    DeckMetaPillView(label: "New", value: "\(deckStore.newCount(for: item))")
+                    DeckMetaPillView(label: "Cards", value: "\(session.deck.cards.count)")
+                    DeckMetaPillView(label: "Due", value: "\(session.dueCount(for: "All Topics"))")
+                    DeckMetaPillView(label: "New", value: "\(session.newCount(for: "All Topics"))")
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Study Settings")
                         .font(.headline)
 
-                    Picker("Mode", selection: studyModeBinding) {
+                    Picker("Mode", selection: $studyMode) {
                         ForEach(StudyMode.allCases) { mode in
                             Text(mode.rawValue).tag(mode)
                         }
                     }
                     .pickerStyle(.menu)
                     
-                    if deckStore.studyMode == .dueAmount {
+                    if studyMode == .dueAmount {
                         TextField("Due Amount",
-                                  text: dueAmountBinding)
+                                  text: $dueAmountText)
                             .keyboardType(.decimalPad)
                     }
 
@@ -97,12 +100,12 @@ struct DeckDetailScreen: View {
 
                 HStack(spacing: 12) {
                     Button("Start Studying") {
-                        onStartStudying(selectedTopic, deckStore.studyMode)
+                        onStartStudying(selectedTopic, studyMode, dueAmount)
                     }
                     .buttonStyle(.borderedProminent)
 
                     NavigationLink {
-                        CardListScreen(item: item, deckStore: deckStore)
+                        CardListScreen(session: session)
                     } label: {
                         Text("Browse Cards")
                     }
@@ -120,8 +123,7 @@ struct DeckDetailScreen: View {
                isPresented: $showResetProgressAlert,
                actions: {
             Button("Yes", role: .destructive) {
-                deckStore.selectDeck(withID: item.id)
-                deckStore.resetProgress()
+                session.resetProgress()
             }
         })
         .navigationTitle("Deck Detail")
@@ -138,7 +140,6 @@ struct DeckDetailScreen: View {
             .ignoresSafeArea()
         )
         .onAppear {
-            deckStore.selectDeck(withID: item.id)
             if !topics.contains(selectedTopic) {
                 selectedTopic = "All Topics"
             }
@@ -164,27 +165,18 @@ struct DeckDetailScreen: View {
     }
 
     private var queueSummary: String {
-        switch deckStore.studyMode {
+        switch studyMode {
         case .due:
-            return "\(deckStore.dueCount(for: selectedTopic)) due now, \(deckStore.newCount(for: selectedTopic)) unseen cards in this scope."
+            return "\(session.dueCount(for: selectedTopic)) due now, \(session.newCount(for: selectedTopic)) unseen cards in this scope."
         case .dueAmount:
-            return "Studying up to \(deckStore.dueAmount) due cards from this scope."
+            return "Studying up to \(dueAmount) due cards from this scope."
         case .all:
             return "Browsing all cards in this deck. Grading in study still updates the spaced repetition schedule."
         }
     }
 
-    private var studyModeBinding: Binding<StudyMode> {
-        Binding(
-            get: { deckStore.studyMode },
-            set: { deckStore.setStudyMode($0) }
-        )
-    }
-
-    private var dueAmountBinding: Binding<String> {
-        Binding(
-            get: { String(deckStore.dueAmount) },
-            set: { deckStore.updateDueAmount(from: $0) }
-        )
+    private var dueAmount: Int {
+        let trimmed = dueAmountText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return Int(trimmed).flatMap { $0 > 0 ? $0 : nil } ?? 20
     }
 }

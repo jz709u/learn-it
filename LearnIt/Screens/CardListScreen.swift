@@ -9,15 +9,13 @@ import SwiftUI
 import UIKit
 
 struct CardListScreen: View {
-    let item: DeckLibraryItem
-    @ObservedObject var deckStore: FlashcardDeckStore
+    @ObservedObject var session: DeckSessionViewModel
 
     @State private var searchText = ""
     @State private var sortOrder: CardSortOrder = .unordered
 
-    init(item: DeckLibraryItem, deckStore: FlashcardDeckStore) {
-        self.item = item
-        self.deckStore = deckStore
+    init(session: DeckSessionViewModel) {
+        self.session = session
         let searchTextField = UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
         searchTextField.attributedPlaceholder = NSAttributedString(
             string: "Search question, answer, or topic",
@@ -30,8 +28,8 @@ struct CardListScreen: View {
     private var filteredCards: [Flashcard] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         let baseCards = query.isEmpty
-            ? deckStore.deck.cards
-            : deckStore.deck.cards.filter {
+            ? session.deck.cards
+            : session.deck.cards.filter {
                 $0.front.localizedCaseInsensitiveContains(query)
                 || $0.back.localizedCaseInsensitiveContains(query)
                 || $0.topic.localizedCaseInsensitiveContains(query)
@@ -50,9 +48,9 @@ struct CardListScreen: View {
     var body: some View {
         List(filteredCards) { card in
             NavigationLink {
-                CardStatsDetailScreen(card: card, reviewState: deckStore.reviewState(for: card))
+                CardStatsDetailScreen(card: card, reviewState: session.reviewState(for: card))
             } label: {
-                CardRowView(card: card, reviewState: deckStore.reviewState(for: card))
+                CardRowView(card: card, reviewState: session.reviewState(for: card))
             }
             .listRowBackground(Color(.systemBackground))
         }
@@ -88,9 +86,6 @@ struct CardListScreen: View {
                 )
             }
         }
-        .onAppear {
-            deckStore.selectDeck(withID: item.id)
-        }
     }
 
     private var sortBar: some View {
@@ -114,7 +109,7 @@ struct CardListScreen: View {
     }
 
     private func hardnessScore(for card: Flashcard) -> Double {
-        let state = deckStore.reviewState(for: card)
+        let state = session.reviewState(for: card)
         let dueBias = state.isDue(at: .now) ? 0.35 : 0
         let newBias = state.lastReviewedAt == nil ? 0.2 : 0
         return Double(state.lapses) * 3.0
