@@ -1,9 +1,10 @@
 import Foundation
 
 final class FlashcardDeckStore: ObservableObject {
-    @Published var deck: FlashcardDeck = .empty
-    @Published var importError: String?
-    @Published var studyMode: StudyMode = .due
+    @Published private(set) var deck: FlashcardDeck = .empty
+    @Published private(set) var importError: String?
+    @Published private(set) var studyMode: StudyMode = .due
+    @Published private(set) var dueAmount: Int = 20
     @Published private(set) var libraryItems: [DeckLibraryItem] = []
     @Published private(set) var selectedDeckID: String?
     @Published private(set) var reviewStates: [String: ReviewState] = [:]
@@ -20,6 +21,24 @@ final class FlashcardDeckStore: ObservableObject {
 
     func loadBundledDeck() {
         selectDeck(withID: bundledDeckID)
+    }
+
+    func setStudyMode(_ mode: StudyMode) {
+        studyMode = mode
+    }
+
+    func updateDueAmount(from text: String) {
+        let digits = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let value = Int(digits), value > 0 else { return }
+        dueAmount = value
+    }
+
+    func dismissImportError() {
+        importError = nil
+    }
+
+    func presentImportError(_ message: String) {
+        importError = message
     }
 
     func importDeck(from url: URL) {
@@ -42,11 +61,9 @@ final class FlashcardDeckStore: ObservableObject {
                 bookmarkData: bookmarkData
             )
             upsertLibraryItem(item)
-            deck = importedDeck
-            selectedDeckID = item.id
-            loadReviewStates()
+            activateDeck(importedDeck, selectedDeckID: item.id)
         } catch {
-            importError = error.localizedDescription
+            presentImportError(error.localizedDescription)
         }
     }
 
@@ -55,17 +72,15 @@ final class FlashcardDeckStore: ObservableObject {
     }
 
     func cards(for topic: String) -> [Flashcard] {
-        let scopedCards = topic == "All Topics" ? deck.cards : deck.cards.filter { $0.topic == topic }
+        let scopedCards = scopedCards(for: topic)
 
         switch studyMode {
         case .all:
             return scopedCards
         case .due:
-            return scopedCards
-                .filter { reviewState(for: $0).isDue(at: .now) }
-                .sorted { lhs, rhs in
-                    reviewState(for: lhs).dueDate < reviewState(for: rhs).dueDate
-                }
+            return dueCards(in: scopedCards)
+        case .dueAmount:
+            return Array(dueCards(in: scopedCards).prefix(dueAmount))
         }
     }
 
@@ -74,12 +89,12 @@ final class FlashcardDeckStore: ObservableObject {
     }
 
     func dueCount(for topic: String) -> Int {
-        let allCards = topic == "All Topics" ? deck.cards : deck.cards.filter { $0.topic == topic }
+        let allCards = scopedCards(for: topic)
         return allCards.filter { reviewState(for: $0).isDue(at: .now) }.count
     }
 
     func newCount(for topic: String) -> Int {
-        let allCards = topic == "All Topics" ? deck.cards : deck.cards.filter { $0.topic == topic }
+        let allCards = scopedCards(for: topic)
         return allCards.filter { reviewStates[$0.id] == nil }.count
     }
 
@@ -116,10 +131,9 @@ final class FlashcardDeckStore: ObservableObject {
 
         switch item.kind {
         case .bundled:
-            return 167
+            return storedCardIDs(for: item)?.count ?? 0
         case .imported:
-            return nil
-                ?? 0
+            return storedCardIDs(for: item)?.count ?? 0
         }
     }
 
@@ -173,7 +187,7 @@ final class FlashcardDeckStore: ObservableObject {
             let data = try JSONEncoder().encode(reviewStates)
             defaults.set(data, forKey: persistenceKey)
         } catch {
-            importError = "Could not save spaced repetition progress."
+            presentImportError("Could not save spaced repetition progress.")
         }
     }
 
@@ -214,7 +228,7 @@ final class FlashcardDeckStore: ObservableObject {
             let data = try JSONEncoder().encode(imported)
             defaults.set(data, forKey: libraryPersistenceKey)
         } catch {
-            importError = "Could not save the deck library."
+            presentImportError("Could not save the deck library.")
         }
     }
 
@@ -235,22 +249,21 @@ final class FlashcardDeckStore: ObservableObject {
 
     private func loadBundledDeckFromBundle() {
         guard let url = Bundle.main.url(forResource: "aws-cloud-practitioner-flashcards", withExtension: "tsv") else {
-            importError = "The bundled sample deck could not be found."
+            presentImportError("The bundled sample deck could not be found.")
             return
         }
 
         do {
-            deck = try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: "Bundled")
-            selectedDeckID = bundledDeckID
-            loadReviewStates()
+            let bundledDeck = try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: "Bundled")
+            activateDeck(bundledDeck, selectedDeckID: bundledDeckID)
         } catch {
-            importError = error.localizedDescription
+            presentImportError(error.localizedDescription)
         }
     }
 
     private func loadImportedDeck(for item: DeckLibraryItem) {
         guard let bookmarkData = item.bookmarkData else {
-            importError = "This imported deck is missing its file bookmark."
+            presentImportError("This imported deck is missing its file bookmark.")
             return
         }
 
@@ -270,15 +283,14 @@ final class FlashcardDeckStore: ObservableObject {
                 }
             }
 
-            deck = try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: item.sourceLabel)
-            selectedDeckID = item.id
-            loadReviewStates()
+            let importedDeck = try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: item.sourceLabel)
+            activateDeck(importedDeck, selectedDeckID: item.id)
 
             if isStale {
                 let refreshed = DeckLibraryItem(
-                    id: deck.identifier,
-                    title: deck.title,
-                    subtitle: deck.subtitle,
+                    id: importedDeck.identifier,
+                    title: importedDeck.title,
+                    subtitle: importedDeck.subtitle,
                     sourceLabel: item.sourceLabel,
                     kind: .imported,
                     bookmarkData: try url.bookmarkData()
@@ -286,7 +298,7 @@ final class FlashcardDeckStore: ObservableObject {
                 upsertLibraryItem(refreshed)
             }
         } catch {
-            importError = "Could not open imported deck `\(item.title)`: \(error.localizedDescription)"
+            presentImportError("Could not open imported deck `\(item.title)`: \(error.localizedDescription)")
         }
     }
 
@@ -332,5 +344,23 @@ final class FlashcardDeckStore: ObservableObject {
                 return nil
             }
         }
+    }
+
+    private func activateDeck(_ deck: FlashcardDeck, selectedDeckID: String) {
+        self.deck = deck
+        self.selectedDeckID = selectedDeckID
+        loadReviewStates()
+    }
+
+    private func scopedCards(for topic: String) -> [Flashcard] {
+        topic == "All Topics" ? deck.cards : deck.cards.filter { $0.topic == topic }
+    }
+
+    private func dueCards(in cards: [Flashcard]) -> [Flashcard] {
+        cards
+            .filter { reviewState(for: $0).isDue(at: .now) }
+            .sorted { lhs, rhs in
+                reviewState(for: lhs).dueDate < reviewState(for: rhs).dueDate
+            }
     }
 }

@@ -12,11 +12,7 @@ struct StudySessionScreen: View {
     let selectedTopic: String
 
     @State private var sessionCards: [Flashcard] = []
-    @State private var studyPosition = 0 {
-        didSet {
-            print("test \(studyPosition)")
-        }
-    }
+    @State private var studyPosition = 0
     @State private var isShowingAnswer = false
 
     private var currentCard: Flashcard? {
@@ -72,7 +68,7 @@ struct StudySessionScreen: View {
     private var cardSection: some View {
         Group {
             if let card = currentCard {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .center, spacing: 14) {
                     CardView(
                         prompt: card.front,
                         answer: card.back,
@@ -114,6 +110,8 @@ struct StudySessionScreen: View {
         switch deckStore.studyMode {
         case .due:
             return "Nothing is due in this topic right now. Go back to the deck detail to change the queue or topic."
+        case .dueAmount:
+            return "There are no due cards available within the selected scope."
         case .all:
             return "This scope does not contain any cards."
         }

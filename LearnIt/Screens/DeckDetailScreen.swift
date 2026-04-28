@@ -69,12 +69,18 @@ struct DeckDetailScreen: View {
                     Text("Study Settings")
                         .font(.headline)
 
-                    Picker("Mode", selection: $deckStore.studyMode) {
+                    Picker("Mode", selection: studyModeBinding) {
                         ForEach(StudyMode.allCases) { mode in
                             Text(mode.rawValue).tag(mode)
                         }
                     }
                     .pickerStyle(.menu)
+                    
+                    if deckStore.studyMode == .dueAmount {
+                        TextField("Due Amount",
+                                  text: dueAmountBinding)
+                            .keyboardType(.decimalPad)
+                    }
 
                     Picker("Topic", selection: $selectedTopic) {
                         ForEach(topics, id: \.self) { topic in
@@ -82,6 +88,7 @@ struct DeckDetailScreen: View {
                         }
                     }
                     .pickerStyle(.menu)
+                    
 
                     Text(queueSummary)
                         .font(.subheadline)
@@ -160,8 +167,24 @@ struct DeckDetailScreen: View {
         switch deckStore.studyMode {
         case .due:
             return "\(deckStore.dueCount(for: selectedTopic)) due now, \(deckStore.newCount(for: selectedTopic)) unseen cards in this scope."
+        case .dueAmount:
+            return "Studying up to \(deckStore.dueAmount) due cards from this scope."
         case .all:
             return "Browsing all cards in this deck. Grading in study still updates the spaced repetition schedule."
         }
+    }
+
+    private var studyModeBinding: Binding<StudyMode> {
+        Binding(
+            get: { deckStore.studyMode },
+            set: { deckStore.setStudyMode($0) }
+        )
+    }
+
+    private var dueAmountBinding: Binding<String> {
+        Binding(
+            get: { String(deckStore.dueAmount) },
+            set: { deckStore.updateDueAmount(from: $0) }
+        )
     }
 }

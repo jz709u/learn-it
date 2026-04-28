@@ -3,6 +3,7 @@ import Foundation
 enum StudyMode: String, CaseIterable, Identifiable {
     case due = "Due"
     case all = "All"
+    case dueAmount = "Due Amount"
 
     var id: String { rawValue }
 }

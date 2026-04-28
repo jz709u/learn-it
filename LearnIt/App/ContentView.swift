@@ -44,9 +44,7 @@ struct ContentView: View {
                 onCompletion: handleImport
             )
             .alert("Import Error", isPresented: importErrorBinding, presenting: deckStore.importError) { _ in
-                Button("OK") {
-                    deckStore.importError = nil
-                }
+                Button("OK") { deckStore.dismissImportError() }
             } message: { error in
                 Text(error)
             }
@@ -113,7 +111,7 @@ struct ContentView: View {
             guard let url = urls.first else { return }
             deckStore.importDeck(from: url)
         case .failure(let error):
-            deckStore.importError = error.localizedDescription
+            deckStore.presentImportError(error.localizedDescription)
         }
     }
 
@@ -127,7 +125,7 @@ struct ContentView: View {
     }
 
     private func startStudying(_ item: DeckLibraryItem, selectedTopic: String, studyMode: StudyMode) {
-        deckStore.studyMode = studyMode
+        deckStore.setStudyMode(studyMode)
         deckStore.selectDeck(withID: item.id)
         activeStudySession = StudySessionRoute(item: item, selectedTopic: selectedTopic)
     }
@@ -139,7 +137,7 @@ private extension ContentView {
             get: { deckStore.importError != nil },
             set: { newValue in
                 if !newValue {
-                    deckStore.importError = nil
+                    deckStore.dismissImportError()
                 }
             }
         )
@@ -164,44 +162,41 @@ private struct DeckLibraryRow: View {
     let badgeBackground: Color
     let onOpenDetail: () -> Void
     let onStartStudying: () -> Void
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Button(action: onOpenDetail) {
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(item.title)
-                            .font(.headline)
-                            .foregroundStyle(Color.primary)
-                            .multilineTextAlignment(.leading)
-
-                        Text(item.sourceLabel)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-
-                        Text(item.subtitle)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
-                    }
-
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 8) {
-                        Text(item.badgeLabel)
-                            .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(badgeBackground, in: Capsule())
-
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.blue)
-                        }
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(item.title)
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(item.sourceLabel)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(item.subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 8) {
+                    Text(item.badgeLabel)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(badgeBackground, in: Capsule())
+                    
+                    if isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.blue)
                     }
                 }
             }
-            .buttonStyle(.plain)
 
             HStack(spacing: 10) {
                 DeckMetaPillView(label: "Cards", value: "\(cardCount)")
@@ -218,6 +213,9 @@ private struct DeckLibraryRow: View {
         .overlay {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(isSelected ? Color.blue.opacity(0.45) : Color.clear, lineWidth: 1.5)
+        }
+        .onTapGesture {
+            onOpenDetail()
         }
     }
 }
