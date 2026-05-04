@@ -10,15 +10,23 @@ struct DeckDetailScreen: View {
     let item: DeckLibraryItem
     @StateObject private var session: DeckSessionViewModel
     let onStartStudying: (String, StudyMode, Int) -> Void
+    let onDeleteDeck: (DeckLibraryItem) -> Void
 
     @State var showResetProgressAlert: Bool = false
+    @State private var showDeleteDeckAlert = false
     @State private var selectedTopic = "All Topics"
     @State private var studyMode: StudyMode = .due
     @State private var dueAmountText = "20"
 
-    init(item: DeckLibraryItem, deckStore: FlashcardDeckStore, onStartStudying: @escaping (String, StudyMode, Int) -> Void) {
+    init(
+        item: DeckLibraryItem,
+        deckStore: FlashcardDeckStore,
+        onStartStudying: @escaping (String, StudyMode, Int) -> Void,
+        onDeleteDeck: @escaping (DeckLibraryItem) -> Void
+    ) {
         self.item = item
         self.onStartStudying = onStartStudying
+        self.onDeleteDeck = onDeleteDeck
         _session = StateObject(wrappedValue: DeckSessionViewModel(item: item, deckStore: deckStore))
     }
 
@@ -115,6 +123,13 @@ struct DeckDetailScreen: View {
                         showResetProgressAlert = true
                     }
                     .buttonStyle(.bordered)
+
+                    if item.kind == .imported {
+                        Button("Delete Deck", role: .destructive) {
+                            showDeleteDeckAlert = true
+                        }
+                        .buttonStyle(.bordered)
+                    }
                 }
             }
             .padding(20)
@@ -125,6 +140,16 @@ struct DeckDetailScreen: View {
             Button("Yes", role: .destructive) {
                 session.resetProgress()
             }
+        })
+        .alert("Delete this deck?",
+               isPresented: $showDeleteDeckAlert,
+               actions: {
+            Button("Delete", role: .destructive) {
+                onDeleteDeck(item)
+            }
+            Button("Cancel", role: .cancel) {}
+        }, message: {
+            Text("This removes the imported deck and its saved study progress from this device.")
         })
         .navigationTitle("Deck Detail")
         .navigationBarTitleDisplayMode(.inline)

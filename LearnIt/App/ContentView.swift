@@ -61,6 +61,9 @@ struct ContentView: View {
                     deckStore: deckStore,
                     onStartStudying: { selectedTopic, studyMode, dueAmount in
                         startStudying(item, selectedTopic: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
+                    },
+                    onDeleteDeck: { deck in
+                        deleteDeck(deck)
                     }
                 )
             }
@@ -141,6 +144,23 @@ struct ContentView: View {
 
     private func startStudying(_ item: DeckLibraryItem, selectedTopic: String, studyMode: StudyMode, dueAmount: Int) {
         activeStudySession = StudySessionRoute(item: item, selectedTopic: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
+    }
+
+    private func deleteDeck(_ item: DeckLibraryItem) {
+        do {
+            try deckStore.deleteDeck(item)
+            if selectedDeckID == item.id {
+                selectedDeckID = nil
+            }
+            if selectedLibraryItem?.id == item.id {
+                selectedLibraryItem = nil
+            }
+            if activeStudySession?.item.id == item.id {
+                activeStudySession = nil
+            }
+        } catch {
+            deckStore.presentImportError(error.localizedDescription)
+        }
     }
 }
 

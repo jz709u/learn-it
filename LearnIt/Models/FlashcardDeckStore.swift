@@ -61,6 +61,28 @@ final class FlashcardDeckStore: ObservableObject {
         defaults.removeObject(forKey: persistenceKey(for: deckID))
     }
 
+    func deleteDeck(_ item: DeckLibraryItem) throws {
+        guard item.kind == .imported else {
+            throw NSError(
+                domain: "FlashcardDeckStore",
+                code: 3,
+                userInfo: [NSLocalizedDescriptionKey: "Bundled decks cannot be deleted."]
+            )
+        }
+
+        if let storedDeckFilename = item.storedDeckFilename {
+            let fileURL = try decksDirectoryURL()
+                .appending(path: storedDeckFilename, directoryHint: .notDirectory)
+            if FileManager.default.fileExists(atPath: fileURL.path()) {
+                try FileManager.default.removeItem(at: fileURL)
+            }
+        }
+
+        libraryItems.removeAll { $0.id == item.id }
+        clearReviewStates(for: item.id)
+        persistLibrary()
+    }
+
     func cardCount(for item: DeckLibraryItem) -> Int {
         (try? loadDeck(for: item).cards.count) ?? 0
     }
