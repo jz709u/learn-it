@@ -12,6 +12,7 @@
 		560E88512F96B7CB00E4A455 /* DeckMetaPillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560E88502F96B7C600E4A455 /* DeckMetaPillView.swift */; };
 		562034BB2FA14B2B005F3854 /* CardListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562034BA2FA14B2B005F3854 /* CardListScreen.swift */; };
 		56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */; };
+		56B4D5102FA3000000BCDE02 /* FlashcardImportProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */; };
 		A00000000000000000000011 /* LearnItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000001 /* LearnItApp.swift */; };
 		A00000000000000000000012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000002 /* ContentView.swift */; };
 		A00000000000000000000013 /* FlashcardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000003 /* FlashcardModels.swift */; };
@@ -28,6 +29,7 @@
 		560E88502F96B7C600E4A455 /* DeckMetaPillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckMetaPillView.swift; sourceTree = "<group>"; };
 		562034BA2FA14B2B005F3854 /* CardListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListScreen.swift; sourceTree = "<group>"; };
 		56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckSessionViewModel.swift; sourceTree = "<group>"; };
+		56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardImportProcessor.swift; sourceTree = "<group>"; };
 		A00000000000000000000000 /* LearnIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LearnIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000001 /* LearnItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnItApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 		A00000000000000000000035 /* Parsing */ = {
 			isa = PBXGroup;
 			children = (
+				56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */,
 				A00000000000000000000005 /* TSVFlashcardParser.swift */,
 			);
 			path = Parsing;
@@ -213,6 +216,7 @@
 				560E88512F96B7CB00E4A455 /* DeckMetaPillView.swift in Sources */,
 				A00000000000000000000014 /* FlashcardDeckStore.swift in Sources */,
 				56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */,
+				56B4D5102FA3000000BCDE02 /* FlashcardImportProcessor.swift in Sources */,
 				A00000000000000000000015 /* TSVFlashcardParser.swift in Sources */,
 				A00000000000000000000016 /* CardView.swift in Sources */,
 				A00000000000000000000018 /* ReviewScheduler.swift in Sources */,
@@ -279,7 +283,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9SMXYTBRQ4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Learn It";
@@ -309,7 +313,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9SMXYTBRQ4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Learn It";

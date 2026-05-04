@@ -5,6 +5,7 @@ struct ContentView: View {
     @ObservedObject var deckStore: FlashcardDeckStore
 
     @State private var showingImporter = false
+    @State private var pendingImportDocument: ImportedSourceDocument?
     @State private var selectedLibraryItem: DeckLibraryItem?
     @State private var activeStudySession: StudySessionRoute?
     @State private var selectedDeckID: String?
@@ -33,17 +34,22 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Import TSV") {
+                    Button("Import") {
                         showingImporter = true
                     }
                 }
             }
             .fileImporter(
                 isPresented: $showingImporter,
-                allowedContentTypes: [.tabSeparatedText, .plainText],
+                allowedContentTypes: FlashcardImportProcessor.supportedContentTypes,
                 allowsMultipleSelection: false,
                 onCompletion: handleImport
             )
+            .sheet(item: $pendingImportDocument) { document in
+                ImportDeckProcessingSheet(document: document, deckStore: deckStore) { importedItem in
+                    selectedDeckID = importedItem.id
+                }
+            }
             .alert("Import Error", isPresented: importErrorBinding, presenting: deckStore.importError) { _ in
                 Button("OK") { deckStore.dismissImportError() }
             } message: { error in
@@ -114,7 +120,11 @@ struct ContentView: View {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            deckStore.importDeck(from: url)
+            do {
+                pendingImportDocument = try FlashcardImportProcessor.prepareDocument(from: url)
+            } catch {
+                deckStore.presentImportError(error.localizedDescription)
+            }
         case .failure(let error):
             deckStore.presentImportError(error.localizedDescription)
         }
@@ -131,6 +141,145 @@ struct ContentView: View {
 
     private func startStudying(_ item: DeckLibraryItem, selectedTopic: String, studyMode: StudyMode, dueAmount: Int) {
         activeStudySession = StudySessionRoute(item: item, selectedTopic: selectedTopic, studyMode: studyMode, dueAmount: dueAmount)
+    }
+}
+
+private struct ImportDeckProcessingSheet: View {
+    let document: ImportedSourceDocument
+    @ObservedObject var deckStore: FlashcardDeckStore
+    let onImported: (DeckLibraryItem) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var generateMnemonics = false
+    @State private var isProcessing = false
+    @State private var processingSummary = "The imported file will be converted into a local deck and added to your library."
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    headerCard
+                    appleIntelligenceCard
+                    fileSummaryCard
+                }
+                .padding(20)
+            }
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.99, green: 0.95, blue: 0.88),
+                        Color(red: 1.0, green: 0.98, blue: 0.94)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+            )
+            .navigationTitle("Process Import")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .disabled(isProcessing)
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(isProcessing ? "Processing..." : "Generate") {
+                        processImport()
+                    }
+                    .disabled(isProcessing)
+                }
+            }
+        }
+    }
+
+    private var headerCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(document.suggestedDeckTitle)
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.black)
+
+            Text(document.sourceFilename)
+                .font(.subheadline)
+                .foregroundStyle(Color.black.opacity(0.7))
+
+            Text(processingSummary)
+                .font(.subheadline)
+                .foregroundStyle(Color.black.opacity(0.7))
+        }
+        .foregroundStyle(Color.black)
+        .padding(18)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    private var appleIntelligenceCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Process With Apple Intelligence")
+                .font(.headline)
+                .foregroundStyle(Color.black)
+
+            Text(FlashcardImportProcessor.appleIntelligenceStatusDescription())
+                .font(.subheadline)
+                .foregroundStyle(Color.black.opacity(0.72))
+
+            Toggle("Generate mnemonics", isOn: $generateMnemonics)
+                .toggleStyle(.switch)
+        }
+        .foregroundStyle(Color.black)
+        .padding(18)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    private var fileSummaryCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Imported File")
+                .font(.headline)
+                .foregroundStyle(Color.black)
+
+            HStack(spacing: 12) {
+                DeckMetaPillView(label: "Format", value: document.sourceFormat.displayName)
+                DeckMetaPillView(label: "Chars", value: "\(document.rawText.count)")
+            }
+
+            Text(document.rawText.trimmingCharacters(in: .whitespacesAndNewlines))
+                .font(.footnote.monospaced())
+                .foregroundStyle(Color.black.opacity(0.72))
+                .lineLimit(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .foregroundStyle(Color.black)
+        .padding(18)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    private func processImport() {
+        isProcessing = true
+
+        Task {
+            do {
+                let result = try await FlashcardImportProcessor.process(document, generateMnemonics: generateMnemonics)
+                try deckStore.saveImportedDeck(result.deck, sourceLabel: document.sourceFilename, format: document.sourceFormat)
+
+                await MainActor.run {
+                    if let importedItem = deckStore.libraryItems.first(where: { $0.id == result.deck.identifier }) {
+                        onImported(importedItem)
+                    }
+                    dismiss()
+                }
+            } catch {
+                await MainActor.run {
+                    processingSummary = error.localizedDescription
+                    deckStore.presentImportError(error.localizedDescription)
+                }
+            }
+
+            await MainActor.run {
+                isProcessing = false
+            }
+        }
     }
 }
 

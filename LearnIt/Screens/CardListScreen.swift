@@ -33,6 +33,7 @@ struct CardListScreen: View {
                 $0.front.localizedCaseInsensitiveContains(query)
                 || $0.back.localizedCaseInsensitiveContains(query)
                 || $0.topic.localizedCaseInsensitiveContains(query)
+                || ($0.mnemonic?.localizedCaseInsensitiveContains(query) ?? false)
             }
 
         switch sortOrder {
@@ -205,6 +206,9 @@ private struct CardStatsDetailScreen: View {
             VStack(alignment: .leading, spacing: 20) {
                 detailCard(title: "Question", text: card.front)
                 detailCard(title: "Answer", text: card.back)
+                if let mnemonic = card.mnemonic, !mnemonic.isEmpty {
+                    detailCard(title: "Mnemonic", text: mnemonic)
+                }
 
                 HStack(spacing: 12) {
                     StatChip(label: "Topic", value: card.topic)

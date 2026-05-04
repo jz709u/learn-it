@@ -5,21 +5,23 @@ struct Flashcard: Identifiable, Hashable, Codable {
     let front: String
     let back: String
     let topic: String
+    let mnemonic: String?
 
-    init(front: String, back: String, topic: String) {
+    init(front: String, back: String, topic: String, mnemonic: String? = nil) {
         self.front = front
         self.back = back
         self.topic = topic
-        self.id = Self.makeID(front: front, back: back, topic: topic)
+        self.mnemonic = mnemonic
+        self.id = Self.makeID(front: front, back: back, topic: topic, mnemonic: mnemonic)
     }
 
-    private static func makeID(front: String, back: String, topic: String) -> String {
-        let raw = [topic, front, back].joined(separator: "\u{241F}")
+    private static func makeID(front: String, back: String, topic: String, mnemonic: String?) -> String {
+        let raw = [topic, front, back, mnemonic ?? ""].joined(separator: "\u{241F}")
         return StableHash.fnv1a64(raw)
     }
 }
 
-struct FlashcardDeck {
+struct FlashcardDeck: Codable {
     var identifier: String
     var title: String
     var subtitle: String
@@ -33,7 +35,7 @@ struct FlashcardDeck {
     static let empty = FlashcardDeck(
         identifier: "empty",
         title: "AWS Certified Cloud Practitioner",
-        subtitle: "Import a TSV deck to start studying.",
+        subtitle: "Import a deck file to start studying.",
         sourceLabel: "None",
         cards: []
     )
@@ -44,12 +46,37 @@ enum DeckSourceKind: String, Codable {
     case imported
 }
 
+enum ImportedDeckFormat: String, Codable {
+    case tsv
+    case csv
+    case json
+    case markdown
+    case plainText
+
+    var displayName: String {
+        switch self {
+        case .tsv:
+            return "TSV"
+        case .csv:
+            return "CSV"
+        case .json:
+            return "JSON"
+        case .markdown:
+            return "Markdown"
+        case .plainText:
+            return "Plain Text"
+        }
+    }
+}
+
 struct DeckLibraryItem: Identifiable, Codable, Hashable {
     let id: String
     var title: String
     var subtitle: String
     var sourceLabel: String
     var kind: DeckSourceKind
+    var storedDeckFilename: String?
+    var importedFormat: ImportedDeckFormat?
     var bookmarkData: Data?
 
     var badgeLabel: String {

@@ -78,6 +78,7 @@ struct StudySessionScreen: View {
                     CardView(
                         prompt: card.front,
                         answer: card.back,
+                        mnemonic: card.mnemonic,
                         isShowingAnswer: $isShowingAnswer
                     )
                     .id(card.id)

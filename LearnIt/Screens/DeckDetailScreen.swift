@@ -158,9 +158,9 @@ struct DeckDetailScreen: View {
     private var detailDescription: String {
         switch item.kind {
         case .bundled:
-            return "This deck ships with the app, so it is always available even before you import your own TSV files."
+            return "This deck ships with the app, so it is always available even before you import your own study files."
         case .imported:
-            return "This deck was imported from a TSV file and stored in your deck library for quick access."
+            return "This deck was processed from an imported file, saved locally, and added to your deck library for quick access."
         }
     }
 

@@ -11,29 +11,24 @@ final class FlashcardDeckStore: ObservableObject {
         loadLibrary()
     }
 
-    func importDeck(from url: URL) {
-        let granted = url.startAccessingSecurityScopedResource()
-        defer {
-            if granted {
-                url.stopAccessingSecurityScopedResource()
-            }
-        }
+    func saveImportedDeck(_ deck: FlashcardDeck, sourceLabel: String, format: ImportedDeckFormat) throws {
+        let filename = "\(deck.identifier).json"
+        let fileURL = try decksDirectoryURL()
+            .appending(path: filename, directoryHint: .notDirectory)
+        let data = try JSONEncoder().encode(deck)
+        try data.write(to: fileURL, options: .atomic)
 
-        do {
-            let importedDeck = try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: url.lastPathComponent)
-            let bookmarkData = try url.bookmarkData()
-            let item = DeckLibraryItem(
-                id: importedDeck.identifier,
-                title: importedDeck.title,
-                subtitle: importedDeck.subtitle,
-                sourceLabel: importedDeck.sourceLabel,
-                kind: .imported,
-                bookmarkData: bookmarkData
-            )
-            upsertLibraryItem(item)
-        } catch {
-            presentImportError(error.localizedDescription)
-        }
+        let item = DeckLibraryItem(
+            id: deck.identifier,
+            title: deck.title,
+            subtitle: deck.subtitle,
+            sourceLabel: sourceLabel,
+            kind: .imported,
+            storedDeckFilename: filename,
+            importedFormat: format,
+            bookmarkData: nil
+        )
+        upsertLibraryItem(item)
     }
 
     func loadDeck(for item: DeckLibraryItem) throws -> FlashcardDeck {
@@ -106,6 +101,8 @@ final class FlashcardDeckStore: ObservableObject {
             subtitle: "Study 167 cards from a TSV deck.",
             sourceLabel: "Bundled",
             kind: .bundled,
+            storedDeckFilename: nil,
+            importedFormat: .tsv,
             bookmarkData: nil
         )
 
@@ -150,11 +147,17 @@ final class FlashcardDeckStore: ObservableObject {
                 userInfo: [NSLocalizedDescriptionKey: "The bundled sample deck could not be found."]
             )
         }
-
         return try TSVFlashcardParser.parse(contentsOf: url, sourceLabel: "Bundled")
     }
 
     private func loadImportedDeck(for item: DeckLibraryItem) throws -> FlashcardDeck {
+        if let storedDeckFilename = item.storedDeckFilename {
+            let fileURL = try decksDirectoryURL()
+                .appending(path: storedDeckFilename, directoryHint: .notDirectory)
+            let data = try Data(contentsOf: fileURL)
+            return try JSONDecoder().decode(FlashcardDeck.self, from: data)
+        }
+
         guard let bookmarkData = item.bookmarkData else {
             throw NSError(
                 domain: "FlashcardDeckStore",
@@ -187,6 +190,8 @@ final class FlashcardDeckStore: ObservableObject {
                 subtitle: deck.subtitle,
                 sourceLabel: item.sourceLabel,
                 kind: .imported,
+                storedDeckFilename: nil,
+                importedFormat: .tsv,
                 bookmarkData: try url.bookmarkData()
             )
             upsertLibraryItem(refreshed)
@@ -197,6 +202,20 @@ final class FlashcardDeckStore: ObservableObject {
 
     private var libraryPersistenceKey: String {
         "deck-library.items"
+    }
+
+    private func decksDirectoryURL() throws -> URL {
+        let baseURL = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        let directoryURL = baseURL
+            .appending(path: "LearnIt", directoryHint: .isDirectory)
+            .appending(path: "Decks", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        return directoryURL
     }
 
     private func persistenceKey(for identifier: String) -> String {

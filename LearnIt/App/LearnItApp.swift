@@ -12,6 +12,7 @@ struct LearnItApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(deckStore: deckStore)
+                .preferredColorScheme(.light)
         }
     }
 
