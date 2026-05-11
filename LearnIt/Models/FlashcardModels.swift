@@ -50,6 +50,7 @@ enum ImportedDeckFormat: String, Codable {
     case tsv
     case csv
     case json
+    case pdf
     case markdown
     case plainText
 
@@ -61,6 +62,8 @@ enum ImportedDeckFormat: String, Codable {
             return "CSV"
         case .json:
             return "JSON"
+        case .pdf:
+            return "PDF"
         case .markdown:
             return "Markdown"
         case .plainText:

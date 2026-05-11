@@ -4,6 +4,7 @@ import UIKit
 @main
 struct LearnItApp: App {
     @StateObject private var deckStore = FlashcardDeckStore()
+    @StateObject private var creditStore = ImportCreditStore()
 
     init() {
         configureNavigationBarAppearance()
@@ -12,6 +13,7 @@ struct LearnItApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(deckStore: deckStore)
+                .environmentObject(creditStore)
                 .preferredColorScheme(.light)
         }
     }

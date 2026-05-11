@@ -13,6 +13,12 @@
 		562034BB2FA14B2B005F3854 /* CardListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562034BA2FA14B2B005F3854 /* CardListScreen.swift */; };
 		56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */; };
 		56B4D5102FA3000000BCDE02 /* FlashcardImportProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */; };
+		56C5E6112FB4000000CDEF03 /* ImportDeckProcessingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E6102FB4000000CDEF03 /* ImportDeckProcessingSheet.swift */; };
+		56C5E6132FB4000000CDEF03 /* ImportCreditStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E6122FB4000000CDEF03 /* ImportCreditStore.swift */; };
+		56C5E6152FB4000000CDEF03 /* CreditStoreSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E6142FB4000000CDEF03 /* CreditStoreSheet.swift */; };
+		56C5E6192FB4000000CDEF03 /* OpenAIFlashcardClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E6182FB4000000CDEF03 /* OpenAIFlashcardClient.swift */; };
+		56C5E61B2FB4000000CDEF03 /* ImportedDocumentLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E61A2FB4000000CDEF03 /* ImportedDocumentLoader.swift */; };
+		56C5E61D2FB4000000CDEF03 /* FlashcardLocalParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C5E61C2FB4000000CDEF03 /* FlashcardLocalParser.swift */; };
 		A00000000000000000000011 /* LearnItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000001 /* LearnItApp.swift */; };
 		A00000000000000000000012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000002 /* ContentView.swift */; };
 		A00000000000000000000013 /* FlashcardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000003 /* FlashcardModels.swift */; };
@@ -30,6 +36,12 @@
 		562034BA2FA14B2B005F3854 /* CardListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardListScreen.swift; sourceTree = "<group>"; };
 		56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckSessionViewModel.swift; sourceTree = "<group>"; };
 		56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardImportProcessor.swift; sourceTree = "<group>"; };
+		56C5E6102FB4000000CDEF03 /* ImportDeckProcessingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportDeckProcessingSheet.swift; sourceTree = "<group>"; };
+		56C5E6122FB4000000CDEF03 /* ImportCreditStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCreditStore.swift; sourceTree = "<group>"; };
+		56C5E6142FB4000000CDEF03 /* CreditStoreSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditStoreSheet.swift; sourceTree = "<group>"; };
+		56C5E6182FB4000000CDEF03 /* OpenAIFlashcardClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIFlashcardClient.swift; sourceTree = "<group>"; };
+		56C5E61A2FB4000000CDEF03 /* ImportedDocumentLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportedDocumentLoader.swift; sourceTree = "<group>"; };
+		56C5E61C2FB4000000CDEF03 /* FlashcardLocalParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardLocalParser.swift; sourceTree = "<group>"; };
 		A00000000000000000000000 /* LearnIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LearnIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000001 /* LearnItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnItApp.swift; sourceTree = "<group>"; };
 		A00000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -96,6 +108,7 @@
 			children = (
 				A00000000000000000000001 /* LearnItApp.swift */,
 				A00000000000000000000002 /* ContentView.swift */,
+				56C5E6102FB4000000CDEF03 /* ImportDeckProcessingSheet.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -105,6 +118,7 @@
 			children = (
 				A00000000000000000000003 /* FlashcardModels.swift */,
 				A00000000000000000000004 /* FlashcardDeckStore.swift */,
+				56C5E6122FB4000000CDEF03 /* ImportCreditStore.swift */,
 				56A3C3FF2FA2000000ABCD01 /* DeckSessionViewModel.swift */,
 				A00000000000000000000008 /* ReviewScheduler.swift */,
 			);
@@ -115,6 +129,9 @@
 			isa = PBXGroup;
 			children = (
 				56B4D50F2FA3000000BCDE02 /* FlashcardImportProcessor.swift */,
+				56C5E61A2FB4000000CDEF03 /* ImportedDocumentLoader.swift */,
+				56C5E61C2FB4000000CDEF03 /* FlashcardLocalParser.swift */,
+				56C5E6182FB4000000CDEF03 /* OpenAIFlashcardClient.swift */,
 				A00000000000000000000005 /* TSVFlashcardParser.swift */,
 			);
 			path = Parsing;
@@ -125,6 +142,7 @@
 			children = (
 				560E88502F96B7C600E4A455 /* DeckMetaPillView.swift */,
 				A00000000000000000000006 /* CardView.swift */,
+				56C5E6142FB4000000CDEF03 /* CreditStoreSheet.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -210,15 +228,21 @@
 				A00000000000000000000011 /* LearnItApp.swift in Sources */,
 				A00000000000000000000012 /* ContentView.swift in Sources */,
 				A00000000000000000000013 /* FlashcardModels.swift in Sources */,
+				56C5E6112FB4000000CDEF03 /* ImportDeckProcessingSheet.swift in Sources */,
 				560E884D2F96B72400E4A455 /* DeckDetailScreen.swift in Sources */,
 				560E884F2F96B75100E4A455 /* StudySessionScreen.swift in Sources */,
 				562034BB2FA14B2B005F3854 /* CardListScreen.swift in Sources */,
 				560E88512F96B7CB00E4A455 /* DeckMetaPillView.swift in Sources */,
 				A00000000000000000000014 /* FlashcardDeckStore.swift in Sources */,
+				56C5E6132FB4000000CDEF03 /* ImportCreditStore.swift in Sources */,
 				56A3C4002FA2000000ABCD01 /* DeckSessionViewModel.swift in Sources */,
 				56B4D5102FA3000000BCDE02 /* FlashcardImportProcessor.swift in Sources */,
+				56C5E61B2FB4000000CDEF03 /* ImportedDocumentLoader.swift in Sources */,
+				56C5E61D2FB4000000CDEF03 /* FlashcardLocalParser.swift in Sources */,
+				56C5E6192FB4000000CDEF03 /* OpenAIFlashcardClient.swift in Sources */,
 				A00000000000000000000015 /* TSVFlashcardParser.swift in Sources */,
 				A00000000000000000000016 /* CardView.swift in Sources */,
+				56C5E6152FB4000000CDEF03 /* CreditStoreSheet.swift in Sources */,
 				A00000000000000000000018 /* ReviewScheduler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
